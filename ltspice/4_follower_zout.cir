@@ -1,0 +1,12 @@
+* Why the TL072 stopband rises: closed-loop output impedance of a TL072 follower
+* Inject 1 A AC into the output; V(out) in volts = Zout in ohms. Plot mag(V(out)).
+.include tl072.lib
+VCC vcc 0 15
+VEE vee 0 -15
+XU 0 out vcc vee out TL072
+IT 0 out AC 1
+.ac dec 50 100 10Meg
+.meas AC z1k FIND mag(V(out)) AT=1k
+.meas AC z100k FIND mag(V(out)) AT=100k
+.meas AC z1meg FIND mag(V(out)) AT=1Meg
+.end

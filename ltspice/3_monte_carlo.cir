@@ -1,0 +1,24 @@
+* 4th-order Butterworth LPF, fc = 1 kHz | two unity-gain Sallen-Key stages | TL072, +/-15 V
+* MONTE CARLO: 500 runs, R +/-1%, C +/-5% (uniform). After it runs: View > SPICE Error Log > right-click > Plot .step'ed .meas data.
+.include tl072.lib
+.param R1a=mc(6.81k,0.01) R2a=mc(36.5k,0.01) C1a=mc(15n,0.05) C2a=mc(6.8n,0.05)
+.param R1b=mc(12.1k,0.01) R2b=mc(43.2k,0.01) C1b=mc(22n,0.05) C2b=mc(2.2n,0.05)
+.step param run 1 500 1
+VCC vcc 0 15
+VEE vee 0 -15
+VIN in 0 AC 1
+* Stage A, Q = 0.541 (low-Q stage first)
+RA1 in a1 {R1a}
+RA2 a1 a2 {R2a}
+CA1 a1 mid {C1a}
+CA2 a2 0 {C2a}
+XUA a2 mid vcc vee mid TL072
+* Stage B, Q = 1.307
+RB1 mid b1 {R1b}
+RB2 b1 b2 {R2b}
+CB1 b1 out {C1b}
+CB2 b2 0 {C2b}
+XUB b2 out vcc vee out TL072
+.ac dec 100 300 3k
+.meas AC f3db WHEN mag(V(out))=0.70711
+.end
