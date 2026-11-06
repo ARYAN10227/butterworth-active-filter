@@ -1,0 +1,31 @@
+* 4th-order Butterworth LPF, fc = 1 kHz, two unity-gain Sallen-Key stages, ideal op-amp
+.include tl072.lib
+.param R1a=6.81k R2a=36.5k C1a=15n C2a=6.8n
+.param R1b=12.1k R2b=43.2k C1b=22n C2b=2.2n
+VCC vcc 0 15
+VEE vee 0 -15
+VIN in 0 DC 0 AC 1 SIN(0 1 1k)
+* Stage A (Q = 0.541)
+RA1 in a1 {R1a}
+RA2 a1 a2 {R2a}
+CA1 a1 mid {C1a}
+CA2 a2 0 {C2a}
+EUA mid 0 a2 mid 1e6
+* Stage B (Q = 1.307)
+RB1 mid b1 {R1b}
+RB2 b1 b2 {R2b}
+CB1 b1 out {C1b}
+CB2 b2 0 {C2b}
+EUB out 0 b2 out 1e6
+.control
+ac dec 200 10 10Meg
+let g = vdb(out)
+meas ac f3db when g=-3.0103
+meas ac g10k find g at=10k
+meas ac g100k find g at=100k
+meas ac gmin min g from=10k to=10Meg
+meas ac fmin when g=gmin
+meas ac g1M find g at=1Meg
+wrdata ac_ideal.txt vdb(out) vp(out)
+.endc
+.end

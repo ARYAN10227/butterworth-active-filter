@@ -1,0 +1,17 @@
+import numpy as np, matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
+i=np.loadtxt("ac_ideal.txt"); t=np.loadtxt("ac_tl072.txt")
+fig,ax=plt.subplots(figsize=(8,4.5))
+ax.semilogx(i[:,0],i[:,1],label="Ideal op-amp",lw=2,color="#4a6fa5")
+ax.semilogx(t[:,0],t[:,1],label="TL072 (±15 V)",lw=2,color="#c0504d",ls="--")
+ax.axhline(-3,color="gray",lw=.8,ls=":"); ax.axvline(1000,color="gray",lw=.8,ls=":")
+ax.set_ylim(-200,10); ax.set_xlim(10,1e7); ax.grid(True,which="both",alpha=.3)
+ax.set_xlabel("Frequency (Hz)"); ax.set_ylabel("Gain (dB)")
+ax.set_title("4th-order Butterworth LPF, fc = 1 kHz"); ax.legend()
+ax.annotate("TL072 stopband bottoms out\n(−136 dB @ 67 kHz), then rises\nas op-amp output impedance grows",
+            xy=(6.7e4,-136),xytext=(1.5e3,-175),arrowprops=dict(arrowstyle="->"),fontsize=9)
+fig.tight_layout(); fig.savefig("bode.png",dpi=150)
+f=np.loadtxt("mc_f3db.txt"); fig,ax=plt.subplots(figsize=(7,4))
+ax.hist(f,bins=30,color="#4a6fa5",edgecolor="white")
+ax.axvline(f.mean(),color="#c0504d",ls="--",label=f"mean {f.mean():.0f} Hz, σ = {f.std(ddof=1)/f.mean()*100:.1f}%")
+ax.set_xlabel("−3 dB frequency (Hz)"); ax.set_ylabel("Runs"); ax.set_title("Monte Carlo, 500 runs (R ±1%, C ±5%)"); ax.legend()
+fig.tight_layout(); fig.savefig("montecarlo_hist.png",dpi=150)
