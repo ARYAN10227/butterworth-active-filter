@@ -1,0 +1,8 @@
+ac_*.txt
+mc_f3db.txt
+*.raw
+*.log
+*.op.raw
+__pycache__/
+*.npy
+.DS_Store
